@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Management System - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h1>Student Attendance Management System</h1>
+                </div>
+                <nav id="nav-menu">
+                    <ul>
+                        <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                        <li><a href="#" id="attendance-link">Attendance</a></li>
+                        <li><a href="#" id="reports-link">Reports</a></li>
+                        <li class="profile-menu">
+                            <a href="#"><i class="fas fa-user-circle"></i> <span id="user-display-name">User</span> <i class="fas fa-caret-down"></i></a>
+                            <div class="profile-dropdown">
+                                <a href="#" id="profile-link">Profile Settings</a>
+                                <a href="#" id="logout-link">Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <!-- Dashboard Section (Common for Teacher/Student) -->
+        <div id="dashboard-section">
+            <h2>Dashboard</h2>
+            <p>Welcome back, <span id="user-name">User</span>!</p>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3 id="total-students">0</h3>
+                    <p>Students in Class</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3 id="overall-attendance">0%</h3>
+                    <p>Overall Attendance</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3 id="classes-this-week">0</h3>
+                    <p>Classes This Week</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Today's Classes</h3>
+                    <button class="btn btn-primary" id="view-all-btn">View Schedule</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Class</th>
+                            <th>Room</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>9:00 AM - 10:30 AM</td>
+                            <td>Mathematics 101</td>
+                            <td>Room 305</td>
+                            <td><span class="present" style="padding: 5px 10px; border-radius: 20px;">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>11:00 AM - 12:30 PM</td>
+                            <td>Computer Science 202</td>
+                            <td>Lab 112</td>
+                            <td><span class="absent" style="padding: 5px 10px; border-radius: 20px;">Upcoming</span></td>
+                        </tr>
+                        <tr>
+                            <td>2:00 PM - 3:30 PM</td>
+                            <td>Physics 105</td>
+                            <td>Room 218</td>
+                            <td><span class="late" style="padding: 5px 10px; border-radius: 20px;">Upcoming</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Attendance Section (Mark for Teachers, View for Students) -->
+        <div id="attendance-section" class="hidden">
+            <h2 id="attendance-title">Attendance</h2>
+            <p class="attendance-date">Today's Date: <span id="current-date">November 15, 2023</span></p>
+            
+            <div id="teacher-attendance" class="hidden">
+                <div class="class-selector">
+                    <div class="class-btn active" data-class="CS101">Computer Science 101</div>
+                    <div class="class-btn" data-class="MATH101">Mathematics 101</div>
+                    <div class="class-btn" data-class="PHYS101">Physics 101</div>
+                    <div class="class-btn" data-class="ENG101">English 101</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Computer Science 101 - Section A</h3>
+                        <div style="display: flex; align-items: center;">
+                            <span id="save-indicator" class="save-indicator"></span>
+                            <button class="btn btn-primary" id="save-attendance">
+                                <i class="fas fa-save"></i> Save Attendance
+                            </button>
+                        </div>
+                    </div>
+                    <table id="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-student="S1001" data-name="John Smith">
+                                <td>S1001</td>
+                                <td>John Smith</td>
+                                <td class="attendance-status">
+                                    <button class="status-btn present active">Present</button>
+                                    <button class="status-btn absent">Absent</button>
+                                </td>
+                            </tr>
+                            <tr data-student="S1002" data-name="Emma Johnson">
+                                <td>S1002</td>
+                                <td>Emma Johnson</td>
+                                <td class="attendance-status">
+                                    <button class="status-btn present active">Present</button>
+                                    <button class="status-btn absent">Absent</button>
+                                </td>
+                            </tr>
+                            <tr data-student="S1003" data-name="Michael Brown">
+                                <td>S1003</td>
+                                <td>Michael Brown</td>
+                                <td class="attendance-status">
+                                    <button class="status-btn present">Present</button>
+                                    <button class="status-btn absent active">Absent</button>
+                                </td>
+                            </tr>
+                            <tr data-student="S1004" data-name="Sarah Davis">
+                                <td>S1004</td>
+                                <td>Sarah Davis</td>
+                                <td class="attendance-status">
+                                    <button class="status-btn present active">Present</button>
+                                    <button class="status-btn absent">Absent</button>
+                                </td>
+                            </tr>
+                            <tr data-student="S1005" data-name="Robert Wilson">
+                                <td>S1005</td>
+                                <td>Robert Wilson</td>
+                                <td class="attendance-status">
+                                    <button class="status-btn present active">Present</button>
+                                    <button class="status-btn absent">Absent</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="student-attendance" class="hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Your Attendance Record</h3>
+                    </div>
+                    <table id="student-records-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Class</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Records loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reports Section -->
+        <div id="reports-section" class="hidden">
+            <h2>Attendance Reports</h2>
+            <p>Generate and export attendance reports</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Monthly Report - November 2023</h3>
+                    <div class="export-options">
+                        <button class="btn btn-success" id="export-csv">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
+                        <button class="btn btn-danger" id="export-pdf">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                    </div>
+                </div>
+                <table id="reports-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Total Classes</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Attendance %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Generated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Profile Settings Section -->
+        <div id="profile-section" class="hidden">
+            <h2>Profile Settings</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Change Account Details</h3>
+                </div>
+                <div class="form-group">
+                    <label for="current-username">Current Username</label>
+                    <input type="text" id="current-username" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="new-username">New Username</label>
+                    <input type="text" id="new-username" class="form-control" placeholder="Enter new username">
+                </div>
+                <div class="form-group">
+                    <label for="current-password">Current Password</label>
+                    <input type="password" id="current-password" class="form-control" placeholder="Enter current password">
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" class="form-control" placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm New Password</label>
+                    <input type="password" id="confirm-password" class="form-control" placeholder="Confirm new password">
+                </div>
+                <button class="btn btn-primary" id="save-profile-btn">Save Changes</button>
+                <span id="profile-save-indicator" class="save-indicator"></span>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for Viewing Schedule -->
+    <div class="modal" id="schedule
